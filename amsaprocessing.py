@@ -448,12 +448,12 @@ def processAMSA():
 
     frame = create_frame(0.9, 0.15, 0.35)
 
-    file_label = tk.Label(frame, text=" ")
-    file_label.place(relx=0.2, rely=0.2)
-
     button_font = ("Calibri", 14)
     open_button = tk.Button(frame, text='Upload Raw Data (GD AMSA) file (.xlsx)', command=open_file, font=button_font)
     open_button.place(relx=0.05, rely=0.2)
+    
+    file_label = tk.Label(frame, text=" ")
+    file_label.place(relx=0.05, rely=0.6)
 
     process_button = tk.Button(frame, text='Process Raw Data and GD Selection', command=split_file, font=button_font)
     process_button.place(relx=0.67, rely=0.5)
@@ -463,24 +463,24 @@ def loadDMCCode():
 
     global file_label_1
 
-    file_label_1 = tk.Label(frame, text="")
-    file_label_1.place(relx=0.05, rely=0.05)
-
     button_font = ("Calibri", 14)
     open_button = tk.Button(frame, text='Upload GD DMC Code (.xlsx)', command=open_file1, font=button_font)
     open_button.place(relx=0.05, rely=0.05)
+    
+    file_label_1 = tk.Label(frame, text="")
+    file_label_1.place(relx=0.05, rely=0.5)
 
 def loadCalibSetupFile():
     global inifile_label
     
     frame = create_frame(0.9, 0.15, 0.65)
 
-    inifile_label = tk.Label(frame, text="")
-    inifile_label.place(relx=0.05, rely=0.4)
-
     button_font = ("Calibri", 14)
     open_button = tk.Button(frame, text='Upload CalibrationSetupFile (.csv)', command=calibration_setup_file, font=button_font)
     open_button.place(relx=0.05, rely=0.4)
+    
+    inifile_label = tk.Label(frame, text="")
+    inifile_label.place(relx=0.05, rely=0.8)
 
     edit_button = tk.Button(frame, text='Process CalibrationSetupFile', command=run_calib_setup_file, font=button_font)
     edit_button.place(relx=0.7, rely=0.45)
