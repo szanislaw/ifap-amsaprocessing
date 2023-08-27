@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 from collections import OrderedDict
 import pandas as pd
+import matplotlib.pyplot as plt
 import os
 import glob
 import re
@@ -11,6 +12,7 @@ import xlsxwriter
 import shutil
 
 logo_image = r"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"
+
 
 def open_file():    
     global data
@@ -95,6 +97,16 @@ def calibration_setup_file():
     inifile_label.config(text=file_path_ini)
     data = pd.read_csv(file_path_ini)
 
+def plot_AMSA2(data):
+    plt.figure(figsize=(8, 6))
+    plt.scatter(data.iloc[:, 0], data.iloc[:, 1], marker='o', color='blue', label='Data Points')
+    plt.xlabel('Column 1')
+    plt.ylabel('Column 2')
+    plt.title('AMSA2 Data Plot')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
 def run_calib_setup_file():
     fpath=file_path_ini
     
@@ -142,7 +154,6 @@ def run_calib_setup_file():
         folders = glob.glob(search_pattern)
         if len(folders) > 0:
             for folder in folders:
-                print(f"Found folder for value {value}: {folder}")
                 files = glob.glob(os.path.join(folder, "*.ini"))
                 if len(files) > 0:
                     for file in files:
@@ -152,9 +163,9 @@ def run_calib_setup_file():
                             sheetname=f'{value}'
                             ini_data.to_excel(writer, sheet_name=sheetname, index=False)
                 else:       
-                    print(f"No files found in folder {folder}")
+                    messagebox.showinfo("Error", "No files found in folder {folder}")
         else:
-            print(f"No folders found for value {value}")
+            messagebox.showinfo("Error", "No folders found for value {value}")
     writer.close()
     
     AMSA_file_path='AMSA.xlsx'
@@ -181,7 +192,7 @@ def run_calib_setup_file():
     ordered_sheets = OrderedDict()
 
     for sheet_name, ini_sheet in new_ini_doc.items():
-        print(sheet_name)
+        # print(sheet_name)
         if sheet_name != '94':
             continue
         
@@ -252,14 +263,14 @@ def run_calib_setup_file():
         folders = glob.glob(search_pattern)
         if len(folders) > 0:
             for folder in folders:
-                print(f"Found folder for value {value}: {folder}")
+                # print(f"Found folder for value {value}: {folder}")
                 
                 files = glob.glob(os.path.join(folder, "*.csv"))
                 if len(files) > 0:
                     for file in files:
                         match = regex.search(file)
                         if match and 'Real' not in file:
-                            print(f"Found file: {file}")
+                            # print(f"Found file: {file}")
                             data = pd.read_csv(file)
                             sheet_name = str(value)
                             data.to_excel(writer1,sheet_name=sheet_name,index=False) 
@@ -267,7 +278,7 @@ def run_calib_setup_file():
                     for file in files:
                         match = regex1.search(file)
                         if match:
-                            print(f"Found file: {file}")
+                            # print(f"Found file: {file}")
                             data = pd.read_csv(file)
                             sheet_name = str(value)
 
@@ -289,7 +300,7 @@ def run_calib_setup_file():
 
     if '94' in data.keys():
         data_94 = data['94'] 
-        print(data_94)
+        # print(data_94)
 
         for sheet_name, sheet_data in AMSA2.items():
             if 'Phase' in sheet_name:
@@ -332,7 +343,7 @@ def run_calib_setup_file():
 
     if '94' in data_1.keys():
         data_94_1 = data_1['94'] 
-        print(data_94_1)
+        # print(data_94_1)
 
         for sheet_name, sheet_data in AMSA2.items():
             if sheet_name in data_94_1.columns.values:            
@@ -400,6 +411,7 @@ def run_calib_setup_file():
             
     #Upon successful completion of the above steps, the new AMSA2.xlsx file is generated, and the new ACC folder is generated. The new ACC folder is renamed to the original ACC folder name, and the original ACC folder is renamed to the original ACC folder name + _old. The new ACC folder is copied to the original ACC folder name, and the original ACC folder is deleted. The new AMSA2.xlsx file is copied to the original AMSA2.xlsx file name, and the original AMSA2.xlsx file is deleted.
     messagebox.showinfo("ifap-amsaprocessing", "Calibration Setup File Processing completed!")
+    plot_AMSA2(AMSA2['1000'])  # Replace 'Your_Sheet_Name' with the actual sheet name from AMSA2.xlsx
     
 def mainWindow():
     global window
