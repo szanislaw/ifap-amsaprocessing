@@ -26,6 +26,73 @@ def open_file1():
     file_label_1.config(text=DMC_file_path)
     DMC_Code = pd.read_csv(DMC_file_path) 
     
+def update_data_columns(product):
+    global data_columns, data_columns1, data_columns2
+    
+    if product == 'Akari':
+        data_columns = {
+            '3001': '20Hz',
+            '3002': '35Hz',
+            '3003': '80Hz',
+            '3004': '300Hz',
+            '3005': '900Hz',
+            '3006': '1000Hz',
+            '3007': '1100Hz',
+            '3008': '3000Hz',
+            '3009': '8000Hz',
+            '3010': '10000Hz',
+        }
+
+        data_columns1 = {
+            '4001': '75Hz',
+            '4002': '1000Hz',
+            '4003': '3000Hz',
+            '4004': '10000Hz',
+        }
+        
+        data_columns2 = {
+            '5001': '94dBSPL',
+            '5002': '100dBSPL',
+            '5003': '106dBSPL',
+            '5004': '112dBSPL',
+            '5005': '118dBSPL',
+            '5006': '124dBSPL',
+            '5007': '127dBSPL',
+            '5008': '130dBSPL',
+        }
+        
+    elif product == 'Fuji':
+        data_columns = {
+            '3001': '20Hz',
+            '3002': '35Hz',
+            '3003': '80Hz',
+            '3004': '300Hz',
+            '3005': '900Hz',
+            '3006': '1000Hz',
+            '3007': '1100Hz',
+            '3008': '3000Hz',
+            '3009': '8000Hz',
+            '3010': '10000Hz',
+        }
+
+        data_columns1 = {
+            '4001': '75Hz',
+            '4002': '1000Hz',
+            '4003': '3000Hz',
+            '4004': '10000Hz',
+        }
+        
+        data_columns2 = {
+            '5001': '94dBSPL',
+            '5002': '100dBSPL',
+            '5003': '106dBSPL',
+            '5004': '112dBSPL',
+            '5005': '118dBSPL',
+            '5006': '124dBSPL',
+            '5007': '127dBSPL',
+            '5008': '130dBSPL',
+        }
+        
 def split_file():
     global data
     global DMC_Code
@@ -36,38 +103,6 @@ def split_file():
     DMC_Code = DMC_Code['DMC'].tolist()
 
     data = data.loc[data['DMC'].isin(DMC_Code)]
-
-#for Akari
-    data_columns = {
-        '3001': '20Hz',
-        '3002': '35Hz',
-        '3003': '80Hz',
-        '3004': '300Hz',
-        '3005': '900Hz',
-        '3006': '1000Hz',
-        '3007': '1100Hz',
-        '3008': '3000Hz',
-        '3009': '8000Hz',
-        '3010': '10000Hz',
-    }
-
-    data_columns1 = {
-        '4001': '75Hz',
-        '4002': '1000Hz',
-        '4003': '3000Hz',
-        '4004': '10000Hz',
-    }
-    
-    data_columns2 = {
-        '5001': '94dBSPL',
-        '5002': '100dBSPL',
-        '5003': '106dBSPL',
-        '5004': '112dBSPL',
-        '5005': '118dBSPL',
-        '5006': '124dBSPL',
-        '5007': '127dBSPL',
-        '5008': '130dBSPL',
-    }
 
     with pd.ExcelWriter('AMSA.xlsx') as writer:
         for col, sheet in data_columns.items():
@@ -413,6 +448,26 @@ def run_calib_setup_file():
     messagebox.showinfo("ifap-amsaprocessing", "Calibration Setup File Processing completed!")
     plot_AMSA2(AMSA2['1000'])  # Replace 'Your_Sheet_Name' with the actual sheet name from AMSA2.xlsx
     
+def productOption():
+    var = tk.StringVar(window)
+    var.set('Select Product')
+
+    frame_width = 0.2
+    frame_height = 0.15
+
+    screen_width = window.winfo_screenwidth()
+
+    frame_x = (screen_width - frame_width * screen_width) / 2
+    frame = tk.Frame(bd=0, highlightthickness=1, highlightbackground="black", highlightcolor="black")
+    frame.place(relx=frame_x/screen_width, rely=0.85, relwidth=frame_width, relheight=frame_height)
+
+    product_combobox = ttk.Combobox(frame, textvariable=var, values=['Akari', 'Fuji'], font=("Calibri", 12))
+    product_combobox.set('Select Product')
+    product_combobox.pack(side="bottom", padx=10, pady=5, fill="x")
+    product_combobox.bind("<<ComboboxSelected>>", lambda event: update_data_columns(var.get()))
+
+    return var
+    
 def mainWindow():
     global window
 
@@ -430,29 +485,14 @@ def mainWindow():
     instructions_label = tk.Label(window, text="This program inputs .stdf-derived .XLSX files, DMC Code of Golden Devices and the CalibrationSetupFile\nto create a new ACC Folder with the Calibrated Data which can be used for calibration purposes.\n\n CURRENTLY: The generated files and directory will be generated in the same directory from where this program is located", font=("Calibri", 13))
     instructions_label.pack(pady=5)
 
-    # projectOption()
+    productOption()
     processAMSA()
     loadDMCCode()
     loadCalibSetupFile()
     
     window.mainloop()  
 
-def projectOption():
-    var = tk.StringVar(window)
-    var.set('Please select a project')
-
-    frame_width = 0.2
-    frame_height = 0.15
-
-    screen_width = window.winfo_screenwidth()
-
-    frame_x = (screen_width - frame_width * screen_width) / 2
-    frame = tk.Frame(bd=0, highlightthickness=1, highlightbackground="black", highlightcolor="black")
-    frame.place(relx=frame_x/screen_width, rely=0.20, relwidth=frame_width, relheight=frame_height)
-
-    project_combobox = ttk.Combobox(frame, textvariable=var, values=['Akari', 'Squid', 'Kassandra'], font=("Calibri", 12))
-    project_combobox.set('Please select a project')
-    project_combobox.pack(side="bottom", padx=10, pady=5, fill="x")
+    # You can add more product cases if needed
 
 def processAMSA():
     global file_label
