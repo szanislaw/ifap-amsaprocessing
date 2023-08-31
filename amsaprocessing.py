@@ -120,22 +120,47 @@ def split_file():
 
     with pd.ExcelWriter('AMSA.xlsx') as writer:
         for col, sheet in data_columns.items():
-            data1 = data.loc[:,['site_num','DMC',f'{col};Output_{sheet}_94dBSPL_NPM;value;p']]
-            data1.rename(columns={f'{col};Output_{sheet}_94dBSPL_NPM;value;p': 'SENS'}, inplace=True)
+            
+            try:
+                data1 = data.loc[:,['site_num','DMC',f'{col};Output_{sheet}_94dBSPL_NPM;value;p']]
+                data1.rename(columns={f'{col};Output_{sheet}_94dBSPL_NPM;value;p': 'SENS'}, inplace=True)
 
-            data1.to_excel(writer, sheet_name=sheet, index=False)
+                data1.to_excel(writer, sheet_name=sheet, index=False)
+                
+            except:
+                data1 = data.loc[:,['site_num','DMC',f'{col};Output_{sheet}_94dBSPL_HPM;value;p']]
+                data1.rename(columns={f'{col};Output_{sheet}_94dBSPL_HPM;value;p': 'SENS'}, inplace=True)
+
+                data1.to_excel(writer, sheet_name=sheet, index=False)
+                
 
             for col, sheet in data_columns1.items():
-                data2 = data.loc[:,['site_num','DMC',f'{col};Phase_{sheet}_94dBSPL_NPM;value;p']]
-                data2.rename(columns={f'{col};Phase_{sheet}_94dBSPL_NPM;value;p': 'PHASE'}, inplace=True)
+                
+                try:
+                    data2 = data.loc[:,['site_num','DMC',f'{col};Phase_{sheet}_94dBSPL_NPM;value;p']]
+                    data2.rename(columns={f'{col};Phase_{sheet}_94dBSPL_NPM;value;p': 'PHASE'}, inplace=True)
 
-                data2.to_excel(writer, sheet_name='Phase_'+sheet, index=False)
+                    data2.to_excel(writer, sheet_name='Phase_'+sheet, index=False)
+                    
+                except:
+                    data2 = data.loc[:,['site_num','DMC',f'{col};Phase_{sheet}_94dBSPL_HPM;value;p']]
+                    data2.rename(columns={f'{col};Phase_{sheet}_94dBSPL_HPM;value;p': 'PHASE'}, inplace=True)
+
+                    data2.to_excel(writer, sheet_name='Phase_'+sheet, index=False)
 
         for col, sheet in data_columns2.items():
-            data3 = data.loc[:,['site_num','DMC',f'{col};THD_1000Hz_{sheet}_NPM;value;p']]
-            data3.rename(columns={f'{col};THD_1000Hz_{sheet}_NPM;value;p': 'THD'}, inplace=True)
+            try:
+                data3 = data.loc[:,['site_num','DMC',f'{col};THD_1000Hz_{sheet}_NPM;value;p']]
+                data3.rename(columns={f'{col};THD_1000Hz_{sheet}_NPM;value;p': 'THD'}, inplace=True)
 
-            data3.to_excel(writer, sheet_name='THD_'+ sheet, index=False)
+                data3.to_excel(writer, sheet_name='THD_'+ sheet, index=False)
+            
+            except:
+                data3 = data.loc[:,['site_num','DMC',f'{col};THD_1000Hz_{sheet}_HPM;value;p']]
+                data3.rename(columns={f'{col};THD_1000Hz_{sheet}_HPM;value;p': 'THD'}, inplace=True)
+
+                data3.to_excel(writer, sheet_name='THD_'+ sheet, index=False)
+                
 
     messagebox.showinfo("ifap-amsaprocessing", "AMSA File Processing completed!")
 
@@ -156,7 +181,7 @@ def plot_AMSA2(data):
     annotation_text = f'Deviation: {diff}'
     plt.text(0.5, 0.9, annotation_text, transform=plt.gca().transAxes, fontsize=12, color='blue')
     
-    plt.axhline(y=target, color='r', linestyle='--', label='Target Sensitivity')
+    plt.axhline(y=target, color='b', linestyle='--', label='Target Sensitivity')
     plt.scatter(x, y, marker='o', color='black', label='Sensitivity Values')
     plt.plot(x, y, '.r-')
     plt.xlabel('Site Number')
